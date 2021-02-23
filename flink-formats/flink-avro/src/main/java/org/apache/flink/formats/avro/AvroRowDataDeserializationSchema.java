@@ -44,15 +44,18 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
-import org.joda.time.LocalDate;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoField;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -325,10 +328,10 @@ public class AvroRowDataDeserializationSchema implements DeserializationSchema<R
 			millis = (Long) object;
 		} else {
 			// use 'provided' Joda time
-			final DateTime value = (DateTime) object;
-			millis = value.toDate().getTime();
+			final Instant value = (Instant) object;
+			millis = Date.from(value).getTime(); // value.toDate().getTime();
 		}
-		return toTimestampData(millis);
+		return TimestampData.fromEpochMillis(millis);
 	}
 
 	private static int convertToDate(Object object) {
@@ -337,7 +340,7 @@ public class AvroRowDataDeserializationSchema implements DeserializationSchema<R
 		} else {
 			// use 'provided' Joda time
 			final LocalDate value = (LocalDate) object;
-			return (int) (toTimestampData(value.toDate().getTime()).getMillisecond() / MILLIS_PER_DAY);
+			return (int) toTimestampData(value.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()).getMillisecond() / MILLIS_PER_DAY;
 		}
 	}
 
@@ -351,8 +354,8 @@ public class AvroRowDataDeserializationSchema implements DeserializationSchema<R
 			millis = (Integer) object;
 		} else {
 			// use 'provided' Joda time
-			final org.joda.time.LocalTime value = (org.joda.time.LocalTime) object;
-			millis = value.get(DateTimeFieldType.millisOfDay());
+			final LocalTime value = (LocalTime) object;
+			millis = value.get(ChronoField.MILLI_OF_DAY); // value.get(DateTimeFieldType.millisOfDay());
 		}
 		return millis;
 	}

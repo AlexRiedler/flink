@@ -33,9 +33,6 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryEncoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificRecord;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,6 +41,9 @@ import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -91,8 +91,8 @@ public final class AvroTestUtils {
 			.setTypeDate(LocalDate.parse("2014-03-01"))
 			.setTypeTimeMillis(LocalTime.parse("12:12:12"))
 			.setTypeTimeMicros(123456)
-			.setTypeTimestampMillis(DateTime.parse("2014-03-01T12:12:12.321Z"))
-			.setTypeTimestampMicros(123456L)
+			.setTypeTimestampMillis(Instant.parse("2014-03-01T12:12:12.321Z"))
+			.setTypeTimestampMicros(Instant.parse("1970-01-01T00:00:00.123456Z"))
 			// byte array must contain the two's-complement representation of the
 			// unscaled integer value in big-endian byte order
 			.setTypeDecimalBytes(ByteBuffer.wrap(BigDecimal.valueOf(2000, 2).unscaledValue().toByteArray()))
@@ -123,7 +123,7 @@ public final class AvroTestUtils {
 		rowUser.setField(17, Time.valueOf("12:12:12"));
 		rowUser.setField(18, 123456);
 		rowUser.setField(19, Timestamp.valueOf("2014-03-01 12:12:12.321"));
-		rowUser.setField(20, 123456L);
+		rowUser.setField(20, Instant.parse("1970-01-01T00:00:00.123456Z"));
 		rowUser.setField(21, BigDecimal.valueOf(2000, 2));
 		rowUser.setField(22, BigDecimal.valueOf(2000, 2));
 
@@ -196,8 +196,8 @@ public final class AvroTestUtils {
 		user.put("type_date", LocalDate.parse("2014-03-01"));
 		user.put("type_time_millis", LocalTime.parse("12:12:12"));
 		user.put("type_time_micros", 123456);
-		user.put("type_timestamp_millis", DateTime.parse("2014-03-01T12:12:12.321Z"));
-		user.put("type_timestamp_micros", 123456L);
+		user.put("type_timestamp_millis", Instant.parse("2014-03-01T12:12:12.321Z"));
+		user.put("type_timestamp_micros", Instant.parse("1970-01-01T00:00:00.123456Z"));
 		user.put("type_decimal_bytes",
 			ByteBuffer.wrap(BigDecimal.valueOf(2000, 2).unscaledValue().toByteArray()));
 		user.put("type_decimal_fixed",
@@ -226,7 +226,7 @@ public final class AvroTestUtils {
 		rowUser.setField(17, Time.valueOf("12:12:12"));
 		rowUser.setField(18, 123456);
 		rowUser.setField(19, Timestamp.valueOf("2014-03-01 12:12:12.321"));
-		rowUser.setField(20, 123456L);
+		rowUser.setField(20, Instant.parse("1970-01-01T00:00:00.123456Z"));
 		rowUser.setField(21, BigDecimal.valueOf(2000, 2));
 		rowUser.setField(22, BigDecimal.valueOf(2000, 2));
 

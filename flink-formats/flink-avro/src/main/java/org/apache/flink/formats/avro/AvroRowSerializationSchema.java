@@ -48,9 +48,11 @@ import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -251,6 +253,8 @@ public class AvroRowSerializationSchema implements SerializationSchema<Row> {
 					return convertFromTime(schema, (Time) object);
 				} else if (object instanceof LocalTime) {
 					return convertFromTime(schema, Time.valueOf((LocalTime) object));
+				} else if (object instanceof Instant) {
+					return (int) ChronoUnit.MICROS.between(Instant.EPOCH, (Instant) object);
 				}
 				return object;
 			case LONG:
@@ -259,6 +263,11 @@ public class AvroRowSerializationSchema implements SerializationSchema<Row> {
 					return convertFromTimestamp(schema, (Timestamp) object);
 				} else if (object instanceof LocalDateTime) {
 					return convertFromTimestamp(schema, Timestamp.valueOf((LocalDateTime) object));
+				} else if (object instanceof Instant) {
+					if (schema.getLogicalType() == LogicalTypes.timestampMicros()) {
+						return ChronoUnit.MICROS.between(Instant.EPOCH, (Instant) object);
+					}
+					throw new RuntimeException("Unsupported timestamp type.");
 				}
 				return object;
 			case FLOAT:

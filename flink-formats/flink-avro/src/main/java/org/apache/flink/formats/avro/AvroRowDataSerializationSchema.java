@@ -213,7 +213,7 @@ public class AvroRowDataSerializationSchema implements SerializationSchema<RowDa
 				converter = (schema, object) -> ByteBuffer.wrap((byte[]) object);
 				break;
 			case TIMESTAMP_WITHOUT_TIME_ZONE:
-				converter = (schema, object) -> ((TimestampData) object).toTimestamp().getTime();
+				converter = (schema, object) -> ((TimestampData) object).toInstant().toEpochMilli();
 				break;
 			case DECIMAL:
 				converter = (schema, object) -> ByteBuffer.wrap(((DecimalData) object).toUnscaledBytes());
